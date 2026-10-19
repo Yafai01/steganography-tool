@@ -1,80 +1,66 @@
-# Steganography Tool – Python Application
+# BlackFeather – LSB Image Steganography Tool
 
-## Overview
-This project is a Python-based steganography tool designed to securely hide and extract secret textual information within image files. It leverages basic image processing techniques to embed data without visibly altering the image, ensuring confidentiality and integrity of the hidden message.
-
-The tool is suitable for academic demonstrations, cybersecurity learning, and introductory research into data hiding techniques.
-
----
+BlackFeather is a small Python desktop app that hides a text message inside an image and reads it back out. It uses least-significant-bit (LSB) steganography: each bit of the message replaces the lowest bit of one red, green, or blue channel value. That change is too small to see. The app has a dark-themed Tkinter GUI, and the encoding and decoding logic is also available as two standalone scripts.
 
 ## Features
-- Encode secret text into PNG images
-- Decode hidden text from encoded images
-- Simple and modular Python implementation
-- Executable generation using PyInstaller
-- Easy to extend for advanced steganography techniques
 
----
+- **Tkinter GUI** (`app.py`): choose a cover image (PNG or BMP), type a secret message, then click **Encode** or **Decode**
+- **LSB encoding** across the R, G, and B channels, with a 16-bit end marker that tells the decoder where the message stops
+- **Lossless output**: encoded images are saved as PNG, so compression does not destroy the hidden bits
+- **Command-line scripts** (`encode.py`, `decode.py`) with the same logic, ready to import or run directly
 
-## Project Structure
-STEGANOGRAPHY_TOOL/
-│
-├── app.py # Main application entry point
-├── encode.py # Logic for encoding secret data
-├── decode.py # Logic for decoding hidden data
-├── requirements.txt # Python dependencies
-├── app.spec # PyInstaller configuration file
-├── sample.png # Sample image for testing
-└── README.md # Project documentation
+## Tech stack
 
-yaml
-Copy code
+- Python 3
+- [Pillow](https://python-pillow.org/) for reading and writing images
+- Tkinter for the GUI (included with most Python installations)
 
----
+## Getting started
 
-## Requirements
-- Python 3.8 or higher
-- Required libraries listed in `requirements.txt`
+### Prerequisites
 
-Install dependencies using:
+- Python 3.8+ with Tkinter available
+
+### Install
+
 ```bash
+git clone https://github.com/Yafai01/steganography-tool.git
+cd steganography-tool
 pip install -r requirements.txt
-Usage
-Run the Application
-bash
-Copy code
+```
+
+### Run the GUI
+
+```bash
 python app.py
-Follow the on-screen instructions to encode or decode secret messages.
+```
 
-Building the Executable
-To generate a standalone executable file:
+1. Click **Browse** and choose a `.png` or `.bmp` cover image.
+2. Type a message and click **Encode**. The result is saved as `blackfeather_encoded.png` in the current directory.
+3. To read a message, browse to an encoded image and click **Decode**. The message appears under "Extracted Message".
 
-bash
-Copy code
-pyinstaller app.spec
-The executable will be available in the dist/ directory.
+### Run the scripts
 
-Applications
-Secure communication
+```bash
+python encode.py   # hides a demo message in sample.png and writes encoded.png
+python decode.py   # prints the message hidden in encoded.png
+```
 
-Academic and educational demonstrations
+You can also import `encode_image(image_path, secret_text, output_path)` and `decode_image(image_path)` from these modules in your own code.
 
-Cybersecurity and data hiding experiments
+## Limitations
 
-Digital watermarking basics
+- Messages are stored as 8 bits per character, so only ASCII and Latin-1 text is supported.
+- Messages are not encrypted. Anyone who knows the method can extract them.
+- The app does not check capacity. Each pixel holds 3 bits, so a long message needs a large enough image.
+- Use lossless formats only (PNG/BMP). Saving the output as JPEG destroys the hidden data.
 
-Limitations
-Supports only text-based data
+## Project structure
 
-Works best with PNG images
-
-Not intended for high-security or production environments
-
-Future Enhancements
-Support for audio and video steganography
-
-Encryption before embedding data
-
-GUI-based interface
-
-Support for multiple image formats
+```
+app.py            Tkinter GUI (BlackFeather)
+encode.py         Encoding function + demo
+decode.py         Decoding function + demo
+sample.png        Sample cover image
+requirements.txt  Python dependencies
+```
